@@ -1,0 +1,52 @@
+name: Scrape
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.19'
+
+      - name: Install Firefox & Geckodriver
+        run: |
+          sudo apt update
+          sudo apt install jq firefox
+
+          json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
+          url=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64") and endswith("gz"))')
+          curl -s -L "$url" | tar -xz
+          chmod +x geckodriver
+          sudo mv geckodriver /usr/bin/
+
+          ls -la /usr/bin/geckodriver
+
+      - name: Scrape
+        id: scrape
+        run: |
+          FIREFOX_BIN=/usr/bin/firefox go run .
+
+      - name: Check for existing tag
+        uses: mukunku/tag-exists-action@v1.0.0
+        id: check-tag
+        with:
+          tag: ${{ steps.scrape.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        if: ${{ steps.check-tag.outputs.exists == 'false' }}
+        with:
+          artifacts: ${{ steps.scrape.outputs.path }}
+          artifactErrorsFailBuild: true
+          tag: ${{ steps.scrape.outputs.version }}
