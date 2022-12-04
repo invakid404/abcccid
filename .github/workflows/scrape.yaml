@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: "^1.19"
 
@@ -45,7 +45,7 @@ jobs:
             go run .
 
       - name: Check for existing tag
-        uses: mukunku/tag-exists-action@v1.0.0
+        uses: mukunku/tag-exists-action@v1.2.0
         id: check-tag
         with:
           tag: ${{ steps.scrape.outputs.version }}
