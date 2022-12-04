@@ -42,12 +42,16 @@ func main() {
 	capabilities := selenium.Capabilities{"browserName": "firefox"}
 
 	firefoxCapabilities := firefox.Capabilities{
-		Binary: os.Getenv("FIREFOX_BIN"),
 		Prefs: map[string]interface{}{
 			"browser.download.folderList": 2,
 			"browser.download.dir":        downloadDirectory,
 		},
 		Args: []string{"--headless"},
+	}
+
+	firefoxBinary := os.Getenv("FIREFOX_BIN")
+	if firefoxBinary != "" {
+		firefoxCapabilities.Binary = firefoxBinary
 	}
 
 	capabilities.AddFirefox(firefoxCapabilities)
