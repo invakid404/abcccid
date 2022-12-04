@@ -40,7 +40,9 @@ jobs:
       - name: Scrape
         id: scrape
         run: |
-          FIREFOX_BIN=/usr/bin/firefox go run .
+          FIREFOX_BIN=/usr/bin/firefox \
+          GECKODRIVER_BIN=/usr/bin/geckodriver \
+            go run .
 
       - name: Check for existing tag
         uses: mukunku/tag-exists-action@v1.0.0
