@@ -15,10 +15,17 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: '^1.19'
+          go-version: "^1.19"
 
       - name: Install Firefox & Geckodriver
         run: |
+          sudo add-apt-repository ppa:mozillateam/ppa
+          echo '
+          Package: *
+          Pin: release o=LP-PPA-mozillateam
+          Pin-Priority: 1001
+          ' | sudo tee /etc/apt/preferences.d/mozilla-firefox
+
           sudo apt update
           sudo apt install jq firefox
 
