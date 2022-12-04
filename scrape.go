@@ -30,7 +30,7 @@ func main() {
 		log.Fatalln("failed to create temp directory:", err)
 	}
 
-	service, err := selenium.NewGeckoDriverService("geckodriver", port)
+	service, err := selenium.NewGeckoDriverService(os.Getenv("GECKODRIVER_BIN"), port)
 	if err != nil {
 		log.Fatalln("failed to create gecko driver service:", err)
 	}
