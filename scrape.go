@@ -106,8 +106,17 @@ func main() {
 		time.Sleep(100 * time.Millisecond)
 	}
 
-	fmt.Printf("::set-output name=path::%s\n", sourcePath)
-	fmt.Printf("::set-output name=version::%s\n", version)
+	outputFilePath := os.Getenv("GITHUB_OUTPUT")
+	outputFile, err := os.OpenFile(outputFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalln("failed to open output file:", err)
+	}
+
+	defer outputFile.Close()
+
+	if _, err := outputFile.WriteString(fmt.Sprintf("path=%s\nversion=%s\n", sourcePath, version)); err != nil {
+		log.Fatalln("failed to write output:", err)
+	}
 
 	// NOTE: webDriver.Quit() hangs when called immediately for some reason.
 	//       Give it a bit of time.
