@@ -133,10 +133,6 @@ func main() {
 	if _, err := outputFile.WriteString(fmt.Sprintf("path=%s\nversion=%s\n", targetPath, version)); err != nil {
 		log.Fatalln("failed to write output:", err)
 	}
-
-	// NOTE: webDriver.Quit() hangs when called immediately for some reason.
-	//       Give it a bit of time.
-	time.Sleep(2 * time.Second)
 }
 
 func waitForElement(webDriver selenium.WebDriver, by, value string) (selenium.WebElement, error) {
