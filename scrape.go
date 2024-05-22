@@ -18,7 +18,7 @@ const (
 	port = 9559
 
 	downloadURL         = "https://www.abcircle.co.jp/en/downloads/product/CIR115B/"
-	downloadButtonXPATH = "//a[../../div/div/p='USB Linux & Mac Driver']"
+	downloadButtonXPATH = "//a[ancestor::p[normalize-space()='USB Linux & Mac Driver']]"
 )
 
 var (
