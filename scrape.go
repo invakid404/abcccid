@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	sourcePattern = regexp.MustCompile("Circle_Linux_Mac_Driver_v([\\d.]+)\\.zip$")
+	sourcePattern = regexp.MustCompile("v([\\d.]+)\\.zip$")
 )
 
 func main() {
@@ -114,6 +114,14 @@ func main() {
 		time.Sleep(100 * time.Millisecond)
 	}
 
+	basePath := filepath.Dir(sourcePath)
+	targetPath := filepath.Join(basePath, fmt.Sprintf("Circle_Linux_Mac_Driver_v%s.zip", version))
+
+	err = os.Rename(sourcePath, targetPath)
+	if err != nil {
+		log.Fatalln("failed to rename file:", err)
+	}
+
 	outputFilePath := os.Getenv("GITHUB_OUTPUT")
 	outputFile, err := os.OpenFile(outputFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -122,7 +130,7 @@ func main() {
 
 	defer outputFile.Close()
 
-	if _, err := outputFile.WriteString(fmt.Sprintf("path=%s\nversion=%s\n", sourcePath, version)); err != nil {
+	if _, err := outputFile.WriteString(fmt.Sprintf("path=%s\nversion=%s\n", targetPath, version)); err != nil {
 		log.Fatalln("failed to write output:", err)
 	}
 
