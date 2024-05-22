@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/tebeka/selenium"
@@ -82,12 +83,19 @@ func main() {
 		log.Fatalln("failed to click download button:", err)
 	}
 
-	sourcePath := ""
-	version := ""
+	var done bool
+	var sourcePath, version string
 
 	for {
+		done, sourcePath, version = true, "", ""
+
 		_ = filepath.WalkDir(downloadDirectory, func(filename string, dirEntry fs.DirEntry, err error) error {
 			if dirEntry.Type().IsDir() {
+				return nil
+			}
+
+			if strings.HasSuffix(filename, ".part") {
+				done = false
 				return nil
 			}
 
